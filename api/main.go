@@ -109,20 +109,20 @@ func main() {
 	})
 
 	// Route 2: Create a quiz
-	r.POST("/quizzes", func(c *gin.Context) {
-		var input *models.Quiz
-		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+	// r.POST("/quizzes", func(c *gin.Context) {
+	// 	var input *models.Quiz
+	// 	if err := c.ShouldBindJSON(&input); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
 
-		if err := db.Create(&input).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+	// 	if err := db.Create(&input).Error; err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
 
-		c.JSON(http.StatusOK, input)
-	})
+	// 	c.JSON(http.StatusOK, input)
+	// })
 
 	// Start Gin Server
 	r.Run(":8080")
