@@ -7,6 +7,7 @@ import (
 	"time"
 	_ "time/tzdata"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"news10/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -53,6 +54,14 @@ func main() {
 
 	r := gin.Default()
 	r.SetTrustedProxies([]string{"127.0.0.1", "::1"})
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Route 1: Get all Quizzes
 	r.GET("/quizzes", func(c *gin.Context) {
@@ -88,7 +97,15 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, quizzes)
+		c.JSON(http.StatusOK, gin.H{
+			"title":   "Top 10 Australian News Quiz",
+			"country": "Australia",
+			"period": gin.H{
+				"from": startDate,
+				"to":   endDate,
+			},
+			"quiz": quizzes,
+		})
 	})
 
 	// Route 2: Create a quiz

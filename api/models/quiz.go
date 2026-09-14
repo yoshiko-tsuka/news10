@@ -2,7 +2,6 @@ package models
 
 import (
     "time"
-	"gorm.io/gorm"
     "gorm.io/datatypes"
 	"github.com/lib/pq"
 )

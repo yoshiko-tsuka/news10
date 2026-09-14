@@ -1,14 +1,25 @@
 services:
+  web:
+    build:
+      context: ./next
+      dockerfile: ../Dockerfile.next
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./next:/app
+      - /app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./api
+      dockerfile: ../Dockerfile.api
     ports:
       - "8080:8080"
       - "2345:2345"
     command: air -c .air.toml
     volumes:
-      - .:/app
+      - ./api:/app
     environment:
       - DB_HOST=db
       - DB_PORT=5432

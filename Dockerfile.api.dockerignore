@@ -1,0 +1,28 @@
+# Ignore git metadata
+.git
+.gitignore
+
+# Ignore build artifacts and local binaries
+bin/
+dist/
+*.exe
+*.test
+*.prof
+
+# Ignore local configuration and secrets
+.env
+*.local
+secrets/
+
+# Ignore Docker files themselves
+Dockerfile
+Dockerfile.*
+.dockerignore
+
+next/
+data/
+
+# Ignore IDE settings and local logs
+.idea/
+.vscode/
+*.log
