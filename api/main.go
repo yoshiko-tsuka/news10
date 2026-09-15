@@ -56,7 +56,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r.SetTrustedProxies([]string{"127.0.0.1", "::1"})
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://news10-chi.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
