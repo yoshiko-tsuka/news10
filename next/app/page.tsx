@@ -31,7 +31,7 @@ type QuizResponse = {
   quiz: QuizQuestion[];
 };
 
-const API_URL = "http://localhost:8080/quizzes?start_date=2026-09-06&end_date=2026-09-14";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function getOptionValue(option: QuizOption, index: number) {
   if (typeof option === "string") {

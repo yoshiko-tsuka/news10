@@ -10,6 +10,7 @@ services:
       - /app/node_modules
     environment:
       - WATCHPACK_POLLING=true
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/quizzes?start_date=2026-09-06&end_date=2026-09-14
   app:
     build:
       context: ./api
