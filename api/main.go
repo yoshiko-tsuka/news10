@@ -53,7 +53,7 @@ func main() {
 	initDB()
 
 	r := gin.Default()
-	r.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 	r.SetTrustedProxies([]string{"127.0.0.1", "::1"})
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},

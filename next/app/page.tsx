@@ -31,7 +31,7 @@ type QuizResponse = {
   quiz: QuizQuestion[];
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 function getOptionValue(option: QuizOption, index: number) {
   if (typeof option === "string") {
@@ -70,8 +70,13 @@ export default function HomePage() {
       try {
         setLoading(true);
         setError("");
+        const params = {
+          start_date: "2026-09-06",
+          end_date: "2026-09-14"
+        }
+        const queryString = new URLSearchParams(params).toString();
 
-        const response = await fetch(API_URL, {
+        const response = await fetch(`${API_URL}?${queryString}`, {
           method: "GET",
           headers: {
             Accept: "application/json",
@@ -106,7 +111,9 @@ export default function HomePage() {
     loadQuiz();
   }, []);
 
-  const questions = quizData?.quiz ?? [];
+  const questions = useMemo(() => {
+    return quizData?.quiz || [];
+  }, [quizData?.quiz]);
   const question = questions[currentQuestion];
 
   const correctAnswer =
@@ -163,7 +170,7 @@ export default function HomePage() {
       <main className="page centered">
         <div className="loaderCard">
           <div className="loader" />
-          <h2>Loading today's challenge</h2>
+          <h2>{"Loading today's challenge"}</h2>
           <p>Fetching the latest Australian news quiz…</p>
         </div>
 
@@ -179,7 +186,7 @@ export default function HomePage() {
           <div className="errorIcon">!</div>
 
           <p className="eyebrow">CONNECTION ERROR</p>
-          <h1>Couldn't load the quiz</h1>
+          <h1>{"Couldn't load the quiz"}</h1>
 
           <p className="errorMessage">{error}</p>
 
@@ -287,8 +294,7 @@ export default function HomePage() {
           <h1>{quizData.title ?? "Australian News Quiz"}</h1>
 
           <p>
-            How closely have you been following the news?
-            Test your knowledge of Australia's biggest stories.
+            {"How closely have you been following the news? Test your knowledge of Australia's biggest stories."}
           </p>
 
           {quizData.period?.from && quizData.period?.to && (
