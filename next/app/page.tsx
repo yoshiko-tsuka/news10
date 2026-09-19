@@ -192,7 +192,7 @@ export default function HomePage() {
 
           <div className="apiHint">
             Make sure your API is running at
-            <code> http://localhost:8080</code>
+            <code> http://URL:PORT</code>
           </div>
 
           <button
