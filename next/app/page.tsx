@@ -71,12 +71,12 @@ export default function HomePage() {
         setLoading(true);
         setError("");
         const params = {
-          start_date: "2026-09-06",
-          end_date: "2026-09-14"
+          page: "1",
+          limit: "10"
         }
         const queryString = new URLSearchParams(params).toString();
 
-        const response = await fetch(`${API_URL}?${queryString}`, {
+        const response = await fetch(`${API_URL}quiz?${queryString}`, {
           method: "GET",
           headers: {
             Accept: "application/json",

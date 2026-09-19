@@ -11,6 +11,8 @@ import (
 	"news10/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/datatypes"
+	"strconv"
 )
 
 var db *gorm.DB
@@ -46,6 +48,24 @@ func initDB() {
 	// Auto-Migrate: Automatically creates/updates the database tables based on the Struct
 	db.AutoMigrate(&models.Quiz{})
 	fmt.Println("Database connection successfully established and tables migrated.")
+}
+
+func Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if page <= 0 {
+			page = 1
+		}
+
+		switch {
+		case pageSize > 100:
+			pageSize = 100 // Cap maximum page size for performance
+		case pageSize <= 0:
+			pageSize = 10  // Default page size
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }
 
 func main() {
@@ -104,6 +124,51 @@ func main() {
 			"period": gin.H{
 				"from": startDate,
 				"to":   endDate,
+			},
+			"quiz": quizzes,
+		})
+	})
+
+	r.GET("/quiz", func(c *gin.Context) {
+		// Get raw query strings using Gin's Query method
+        pageStr := c.Query("page")
+        limitStr := c.Query("limit")
+
+        page, err1 := strconv.Atoi(pageStr)
+		limit, err2 := strconv.Atoi(limitStr)
+
+        if err1 != nil || err2 != nil || page <= 0 || limit <= 0 {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "error": "Invalid Query. Use positive whole numbers",
+            })
+            return
+        }
+
+		var quizzes []*models.Quiz
+		result := db.Scopes(Paginate(page, limit)).Find(&quizzes)
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+			return
+		}
+
+		var startDate datatypes.Date
+		var endDate datatypes.Date
+		var startStr string
+		var endStr string
+		if len(quizzes) > 0 {
+			startDate = quizzes[0].Date
+			endDate = quizzes[len(quizzes) - 1].Date
+			standardStartTime := time.Time(startDate)
+			standardEndTime := time.Time(endDate)
+			startStr = standardStartTime.Format("2006-01-02")
+			endStr = standardEndTime.Format("2006-01-02")
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"title":   "Top 10 Australian News Quiz",
+			"country": "Australia",
+			"period": gin.H{
+				"from": startStr,
+				"to":   endStr,
 			},
 			"quiz": quizzes,
 		})
