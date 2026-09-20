@@ -13,6 +13,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/datatypes"
 	"strconv"
+	"slices"
 )
 
 var db *gorm.DB
@@ -64,7 +65,7 @@ func Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
 		}
 
 		offset := (page - 1) * pageSize
-		return db.Offset(offset).Limit(pageSize)
+		return db.Order("date desc").Offset(offset).Limit(pageSize)
 	}
 }
 
@@ -150,7 +151,7 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 			return
 		}
-
+		slices.Reverse(quizzes)
 		var startDate datatypes.Date
 		var endDate datatypes.Date
 		var startStr string
